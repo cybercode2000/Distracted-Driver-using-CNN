@@ -1,2 +1,2 @@
-# Distracted-Driver-using-CNN-AND-YOLOV8
+# Distracted-Driver-using-CNN
 DATASET HERE -> https://www.kaggle.com/competitions/state-farm-distracted-driver-detection/data
