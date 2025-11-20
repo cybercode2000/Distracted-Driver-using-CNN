@@ -6,7 +6,6 @@ from tensorflow import keras
 import numpy as np
 from PIL import Image
 
-
 app = FastAPI(
     title="Distracted Driver Detector API",
     description="API to classify driver behaviour from an image",
@@ -15,14 +14,16 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],      
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Load model
 model = keras.models.load_model("distracted_driver_detector.keras")
 
+# Class names
 class_names = [
     "Safe Driving",
     "Texting - Right",
@@ -36,21 +37,27 @@ class_names = [
     "Talking to Passenger",
 ]
 
+IMG_SIZE = (224, 224)
+
 
 def predict_image_file(file_obj, top_k: int = 3):
-    img = Image.open(file_obj).convert("RGB").resize((224, 224))
+    # Load and resize
+    img = Image.open(file_obj).convert("RGB").resize(IMG_SIZE)
 
+    # Convert to tensor
     x = np.array(img, dtype=np.float32)
-    x = tf.convert_to_tensor(x)[None, ...] 
+    x = tf.convert_to_tensor(x)[None, ...]  
 
-    # Model already outputs softmax probabilities (DO NOT softmax again!)
+    # Forward pass (model already returns softmax)
     probs = model(x, training=False).numpy()[0]
 
+    # Top-k indices
     top_idxs = np.argsort(-probs)[:top_k]
 
+    # Build output exactly as requested
     results = []
     for i in top_idxs:
-        confidence = float(probs[i])  # already 0–1
+        confidence = float(probs[i])
         confidence_percent = round(confidence * 100, 2)
         results.append({
             "label": class_names[i],
