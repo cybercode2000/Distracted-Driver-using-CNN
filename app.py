@@ -25,9 +25,9 @@ model = keras.models.load_model("distracted_driver_detector.keras")
 
 class_names = [
     "Normal Driving",
-    "Talking on the Phone - Right",
+    "Talking on the Phone",
     "Texting",
-    "Talking on the Phone - Left",
+    "Talking on the Phone",
     "Operating the Radio",
 ]
 
